@@ -4,7 +4,7 @@ Voici le minimum des choses à faire pour la première version de notre applicat
 
 ## Partie applicative
 
-- Une interface, pas forcément graphique
+- Une interface minimale, pas forcément graphique
 - Pouvoir ajouter ou supprimer des jeux
 - Pouvoir ajouter ou supprimer des IAs
 - Pouvoir envoyer et recevoir les transmitions entre jeux et IA, sans forcément traiter ces données
