@@ -6,12 +6,6 @@ class Performia:
     def __init__(self):
         # todo gérer la récupération d'un potentiel état du jeu sauvegardé
 
-        """
-        Format d'un jeu:
-            - id
-            - titre
-            -
-        """
         self._game_id = 0  # à sauvegarder
         self._games = []
         self._command = {
@@ -19,6 +13,7 @@ class Performia:
             ("sup", "sup_game", "sg"): self.sup_game,
             ("list", "list_game", "lg"): self.list_game,
             ("q", "quit"): self.quit,
+            ("h", "help"): self.help,
         }
 
         self._reserved_command = {
@@ -30,7 +25,6 @@ class Performia:
     def add_game(self):
         """
         Fonction qui ajoute un programme à la liste des jeux
-        :return:
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
         chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
@@ -46,7 +40,6 @@ class Performia:
     def sup_game(self):
         """
         Fonction qui supprime un jeu
-        :return:
         """
         self.list_game()
 
@@ -69,7 +62,6 @@ class Performia:
     def list_game(self):
         """
         Fonction qui liste les jeux géré par performia
-        :return:
         """
         for g in self._games:
             print(
@@ -81,8 +73,8 @@ class Performia:
     def safe_input(self, prompt=""):
         """
         Fonction permettant de remplacer la fonction input, lorsque performia fonctionne en mode tty
-        :param prompt:
-        :return:
+        :param prompt: Le message de demande d'entrée clavier de l'utilisateur
+        :return: L'entrée de l'utilisateur
         """
         input_valide = False
         i = ""
@@ -98,9 +90,26 @@ class Performia:
 
         return i
 
+    def help(self):
+        """
+        Fonction qui affiche les commandes disponibles pour l'utilisateur
+        """
+
+        for j in range(len(list(self._command.keys()))):
+            c = list(self._command.keys())[j]
+            print(f"{c} : {self._command[list(self._command.keys())[j]].__doc__}")
+
+
     def quit(self):
-        # todo faire ce qu'il faut pour que l'application quitte
+        """
+        Fonction qui éteint proprement le programme.
+        """
+
+        # Doit être complémentaire avec __del__ !!
+
+        # todo faire ce qu'il faut pour que l'application quitte, __del__ est automatiquement appelé après
         self.quitting = True
+        print("Fin du programme")
 
     def __call__(self, *args, **kwargs):
         """
