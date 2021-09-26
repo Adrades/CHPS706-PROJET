@@ -99,7 +99,6 @@ class Performia:
             c = list(self._command.keys())[j]
             print(f"{c} : {self._command[list(self._command.keys())[j]].__doc__}")
 
-
     def quit(self):
         """
         Fonction qui éteint proprement le programme.
