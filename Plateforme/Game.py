@@ -29,6 +29,11 @@ class Game:
         self.id_ia += 1
 
     def sup_ia(self, identifiant):
+        """
+        Méthode qui retire une IA de la liste des IAs acceptées par le jeu.
+        :param identifiant:
+        :return:
+        """
         self.backup_ia.append(
             self.intelligences_artificiellles.pop(
                 self.intelligences_artificiellles.index(
@@ -38,5 +43,20 @@ class Game:
         )
 
 
+    def list_ia(self):
+        for ia in self.intelligences_artificiellles:
+            print(ia)
+
+
+
+    def __str__(self):
+        return f"Identifiant\t:\t{self.identifiant}\nTitre\t:\t{self.titre}\nExecutable\t:\t{self.chemin_executable}\n"
+
+
 if __name__ == '__main__':
     game_test = Game()
+    game_test.add_ia("msldkmlqs", "sqdqsd")
+    game_test.add_ia("msldkmlqs", "sqdqsd")
+    game_test.add_ia("msldkmlqs", "sqdqsd")
+    game_test.sup_ia(0)
+    print(game_test.intelligences_artificiellles)
