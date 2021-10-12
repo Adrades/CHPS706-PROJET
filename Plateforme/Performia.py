@@ -12,6 +12,7 @@ class Performia:
             ("add", "add_game", "ag"): self.add_game,
             ("sup", "sup_game", "sg"): self.sup_game,
             ("list", "list_game", "lg"): self.list_game,
+            ("launch","launch_session","ls" ) : self.launch_session,
             ("q", "quit"): self.quit,
             ("h", "help"): self.help,
         }
@@ -28,6 +29,9 @@ class Performia:
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
         chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
+
+
+
         self._games.append(
             Game(
                 self._game_id,
@@ -35,7 +39,25 @@ class Performia:
                 chemin
             )
         )
-        self._game_id += 1
+        
+        
+
+        print("Jeu ajouté !")
+
+        
+        #Won't return errors if they actually were
+        #also doesn't notify when game added
+        #some debug features would be good : Viewing all list of games at anytime
+    
+
+    def launch_session(self):
+        """
+        Kel : Launching the Performia session
+        Consists of loading a game and its IA
+
+        """ 
+
+        print("Session Launched ! ")
 
     def sup_game(self):
         """
