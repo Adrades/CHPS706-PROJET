@@ -40,14 +40,14 @@ class Performia:
             )
         )
         
-        
+
 
         print("Jeu ajouté !")
 
         
         #Won't return errors if they actually were
         #also doesn't notify when game added
-        #some debug features would be good : Viewing all list of games at anytime
+        
     
 
     def launch_session(self):
