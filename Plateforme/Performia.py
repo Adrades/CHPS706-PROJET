@@ -1,13 +1,20 @@
+import os
+import platform
+import pickle
 from sys import stderr
 from Game import Game
 
 
 class Performia:
     def __init__(self):
-        # todo gérer la récupération d'un potentiel état du jeu sauvegardé
+        """
+        Initialise les données du programme, en chargeant la sauvegarde si il y en a une.
+        """
 
         self._game_id = 0  # à sauvegarder
         self._games = []
+        self.load_state()
+
         self._command = {
             ("add", "add_game", "ag"): self.add_game,
             ("sup", "sup_game", "sg"): self.sup_game,
@@ -44,9 +51,8 @@ class Performia:
     def __del__(self):
         """
         Enregistre l'état du programme
-        :return:
         """
-        # todo enregistrer l'état du programme à la fin
+        pass
 
     def add_game(self):
         """
@@ -159,12 +165,50 @@ class Performia:
             if self._games[i].identifiant == id_game:
                 found_game = self._games[i]
                 trouve = True
+                found_game.list_ia()
             i += 1
 
-        if trouve:
-            found_game.list_ia()
-        else:
+        if not trouve:
             print("Aucun jeu avec cet identifiant n'a été trouvé!")
+
+    def get_data_games(self):
+        # todo specify data method in _games
+        return self._games
+
+    @staticmethod
+    def get_data_path():
+        data_path = "."
+
+        if platform.system().lower() == 'linux':
+            app_data_path = os.getenv("APPDATA")
+            if not os.path.exists(f"{app_data_path}/.performia"):
+                os.mkdir(f"{app_data_path}/.performia")
+            data_path = f"{app_data_path}/.performia"
+
+        elif platform.system().lower() == 'windows':
+            app_data_path = os.getenv("APPDATA")
+            if not os.path.exists(f"{app_data_path}\\Performia"):
+                os.mkdir(f"{app_data_path}\\Performia")
+            data_path = f"{app_data_path}\\Performia"
+
+        else:
+            print("La plateforme n'est pas reconnue", file=stderr)
+
+        return data_path
+
+    def save_state(self):
+        data_path = self.get_data_path()
+        data = {"_game_id": self._game_id, "_games": self._games}
+        with open(f"{data_path}\\save_performia", 'wb') as outp:
+            pickle.dump(data, outp)
+
+    def load_state(self):
+        data_path = self.get_data_path()
+        if os.path.exists(f"{data_path}\\save_performia"):
+            with open(f"{data_path}\\save_performia", 'rb') as inp:
+                data = pickle.load(inp)
+            self._game_id = data["_game_id"]
+            self._games = data["_games"]
 
     def safe_input(self, prompt=""):
         """
@@ -203,6 +247,7 @@ class Performia:
         # Doit être complémentaire avec __del__ !!
 
         # todo faire ce qu'il faut pour que l'application quitte, __del__ est automatiquement appelé après
+        self.save_state()
         self.quitting = True
         print("Fin du programme")
 
