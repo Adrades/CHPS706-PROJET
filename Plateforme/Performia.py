@@ -3,6 +3,7 @@ import platform
 import pickle
 from sys import stderr
 from Game import Game
+from ServerThread import ServerThread
 
 
 class Performia:
@@ -22,6 +23,7 @@ class Performia:
             ("addia", "add_ia", "aa"): self.add_ia,
             ("supia", "sup_ia", "sa"): self.sup_ia,
             ("listia", "list_ia", "la"): self.list_ia,
+            ("launch", "launch_session", "ls"): self.launch_session,
             ("q", "quit"): self.quit,
             ("h", "help"): self.help,
         }
@@ -60,14 +62,31 @@ class Performia:
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
         chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
+        ip = self.safe_input("Saisissez une IP pour le serveur de jeu : ")
+        port = int(self.safe_input("Saisissez un port pour le jeu : ", int))
+
         self._games.append(
             Game(
                 self._game_id,
                 titre,
-                chemin
+                chemin,
+                ip,
+                port
             )
         )
         self._game_id += 1
+
+    def launch_session(self):
+        """
+        Kel : Launching the Performia session
+        Consists of loading a game and its IA
+
+        """
+        if self._games:
+            # Todo lance uniquement la première IA de la liste, à améliorer
+            thread = ServerThread(self._games[0].ip, self._games[0].port)
+            thread.start()
+        print("Session Launched ! ")
 
     def add_ia(self):
         """
@@ -110,7 +129,6 @@ class Performia:
         self.list_game()
 
         id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: "))
-        id_ia = 0
         found_game: Game
 
         trouve = False
@@ -155,7 +173,6 @@ class Performia:
         self.list_game()
 
         id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez consulter les IA: "))
-        id_ia = 0
         found_game: Game
 
         trouve = False
@@ -210,9 +227,10 @@ class Performia:
             self._game_id = data["_game_id"]
             self._games = data["_games"]
 
-    def safe_input(self, prompt=""):
+    def safe_input(self, prompt="", type_validation: type = str):
         """
         Fonction permettant de remplacer la fonction input, lorsque performia fonctionne en mode tty
+        :param type_validation: Une fonction qui vérifie l'entrée
         :param prompt: Le message de demande d'entrée clavier de l'utilisateur
         :return: L'entrée de l'utilisateur
         """
@@ -220,14 +238,15 @@ class Performia:
         i = ""
         while not input_valide:
             i = input(prompt)
-
-            # todo ajouter une vérification regex de l'input ?
-            if i.lower() in self._reserved_command.keys():
-                pass
-                # todo choix selon la commande réservée
-            else:
-                input_valide = True
-
+            try:
+                type_validation(i)
+                if i.lower() in self._reserved_command.keys():
+                    pass
+                    # todo choix selon la commande réservée
+                else:
+                    input_valide = True
+            except ValueError:
+                print(f"Mauvais type de données, essayer d'entrer un {type_validation.__doc__}")
         return i
 
     def help(self):
