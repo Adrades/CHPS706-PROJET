@@ -1,4 +1,4 @@
-from IA import IA
+from Plateforme.IA import IA
 
 
 class Game:

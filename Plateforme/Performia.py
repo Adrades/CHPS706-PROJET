@@ -2,18 +2,21 @@ import os
 import platform
 import pickle
 from sys import stderr
-from Game import Game
+from Plateforme.Game import Game
 
 
 class Performia:
-    def __init__(self):
+    def __init__(self, **kwargs):
         """
         Initialise les données du programme, en chargeant la sauvegarde si il y en a une.
         """
 
         self._game_id = 0  # à sauvegarder
         self._games = []
-        self.load_state()
+
+        self.in_test_run = "test" in kwargs.keys()
+        if not self.in_test_run:
+            self.load_state()
 
         self._command = {
             ("add", "add_game", "ag"): self.add_game,
@@ -34,10 +37,7 @@ class Performia:
 
     def __call__(self, *args, **kwargs):
         """
-        La boucle principale
-        :param args:
-        :param kwargs:
-        :return:
+        La boucle principale de Performia, qui tourne tant que self.quitting est à False
         """
 
         print("Démarrage de perfomia")
@@ -59,6 +59,8 @@ class Performia:
         Fonction qui ajoute un programme à la liste des jeux
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
+
+        # todo vérification du chemin, regex ?
         chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
         self._games.append(
             Game(
@@ -243,11 +245,8 @@ class Performia:
         """
         Fonction qui éteint proprement le programme.
         """
-
-        # Doit être complémentaire avec __del__ !!
-
-        # todo faire ce qu'il faut pour que l'application quitte, __del__ est automatiquement appelé après
-        self.save_state()
+        if not self.in_test_run:
+            self.save_state()
         self.quitting = True
         print("Fin du programme")
 
