@@ -75,10 +75,14 @@ class Performia:
         """
         self.list_game()
 
-        n_game = int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : "))
-        titre = self.safe_input("Saisissez un titre pour l'ia : ")
-        chemin = self.safe_input(f"Saisissez le chemin de l'executable de l'ia : ")
-        self._games[n_game].add_ia(titre, chemin)
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : ")))
+        if game:
+            titre = self.safe_input("Saisissez un titre pour l'ia : ")
+            chemin = self.safe_input(f"Saisissez le chemin de l'executable de l'ia : ")
+            game.add_ia(titre, chemin)
+        else:
+            print("Aucun jeu avec cet identifiant n'a été trouvé!")
 
     def sup_game(self):
         """
@@ -109,33 +113,23 @@ class Performia:
         """
         self.list_game()
 
-        id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: "))
-        id_ia = 0
-        found_game: Game
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: ")))
 
-        trouve = False
-        i = 0
-        max_i = len(self._games)
-        while i < max_i and not trouve:
-            if self._games[i].identifiant == id_game:
-                found_game = self._games[i]
-                trouve = True
-            i += 1
-
-        if trouve:
-            found_game.list_ia()
+        if game:
+            game.list_ia()
             id_ia = int(self.safe_input("Saisissez l'identifiant de l'IA que vous voulez supprimer: "))
             trouve = False
             i = 0
-            max_i = len(found_game.intelligences_artificiellles)
+            max_i = len(game.intelligences_artificiellles)
             while i < max_i and not trouve:
-                if found_game.intelligences_artificiellles == id_ia:
-                    found_game.sup_ia(id_ia)
+                if game.intelligences_artificiellles == id_ia:
+                    game.sup_ia(id_ia)
                     trouve = True
                 i += 1
 
             if trouve:
-                print(f"L'IA numéro {id_ia} du jeu {found_game.titre} a été supprimé.")
+                print(f"L'IA numéro {id_ia} du jeu {game.titre} a été supprimé.")
             else:
                 print("Aucune IA avec cet identifiant n'a été trouvée!")
         else:
@@ -153,27 +147,34 @@ class Performia:
         Fonction qui liste les IAs d'un jeu
         """
         self.list_game()
-
-        id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez consulter les IA: "))
-        id_ia = 0
-        found_game: Game
-
-        trouve = False
-        i = 0
-        max_i = len(self._games)
-        while i < max_i and not trouve:
-            if self._games[i].identifiant == id_game:
-                found_game = self._games[i]
-                trouve = True
-                found_game.list_ia()
-            i += 1
-
-        if not trouve:
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: ")))
+        if game:
+            game.list_ia()
+        else:
             print("Aucun jeu avec cet identifiant n'a été trouvé!")
 
     def get_data_games(self):
+        """
+        Renvoie les données à sauvegarder pour la liste de jeux
+        :return:
+        """
         # todo specify data method in _games
         return self._games
+
+    def get_game_by_id(self, id_game):
+        """
+        Renvoie un jeu de la liste
+        :param id_game: L'ID du jeu en question
+        :return: Retourne un jeu de la liste, ou None
+        """
+        i = 0
+        max_i = len(self._games)
+        while i < max_i:
+            if self._games[i].identifiant == id_game:
+                return self._games[i]
+            i += 1
+        return None
 
     @staticmethod
     def get_data_path():
