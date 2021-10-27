@@ -88,6 +88,35 @@ class Performia:
             thread.start()
         print("Session Launched ! ")
 
+        # Kel
+        #Communication thread previously launched
+        #launching game and IA in the following assuming format
+        #Three format py, exe, and run for linux
+        #Always launching one game only, retrieving first element of games list then 
+
+        #
+
+        #os.system("tictactoe.py")
+        chemin = self.list_game[0].chemin_executable
+        name_ext = os.path.splitext(chemin)[1]
+        self.launching_extension(name_ext, chemin)
+
+    def launching_extension(self, ext, chemin):
+        if(ext==".py"):
+            os.system(f"python3 {chemin}") #Check version of python
+        else:
+            if(ext==".exe"):
+                os.system(chemin)
+            else:
+                if(ext == ''):
+                    pass #Linux case
+        
+
+
+
+
+
+
     def add_ia(self):
         """
         Fonction qui ajoute une ia à l'un des jeux de la liste
