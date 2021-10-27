@@ -4,6 +4,7 @@ import pickle
 from sys import stderr
 from Game import Game
 from ServerThread import ServerThread
+import socket
 
 
 class Performia:
@@ -23,7 +24,7 @@ class Performia:
             ("addia", "add_ia", "aa"): self.add_ia,
             ("supia", "sup_ia", "sa"): self.sup_ia,
             ("listia", "list_ia", "la"): self.list_ia,
-            ("launch", "launch_session", "ls"): self.launch_session,
+            ("launch_session", "launch", "start"): self.launch_session,
             ("q", "quit"): self.quit,
             ("h", "help"): self.help,
         }
@@ -76,18 +77,6 @@ class Performia:
         )
         self._game_id += 1
 
-    def launch_session(self):
-        """
-        Kel : Launching the Performia session
-        Consists of loading a game and its IA
-
-        """
-        if self._games:
-            # Todo lance uniquement la première IA de la liste, à améliorer
-            thread = ServerThread(self._games[0].ip, self._games[0].port)
-            thread.start()
-        print("Session Launched ! ")
-
     def add_ia(self):
         """
         Fonction qui ajoute une ia à l'un des jeux de la liste
@@ -128,32 +117,23 @@ class Performia:
         """
         self.list_game()
 
-        id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: "))
-        found_game: Game
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: ")))
 
-        trouve = False
-        i = 0
-        max_i = len(self._games)
-        while i < max_i and not trouve:
-            if self._games[i].identifiant == id_game:
-                found_game = self._games[i]
-                trouve = True
-            i += 1
-
-        if trouve:
-            found_game.list_ia()
+        if game:
+            game.list_ia()
             id_ia = int(self.safe_input("Saisissez l'identifiant de l'IA que vous voulez supprimer: "))
             trouve = False
             i = 0
-            max_i = len(found_game.intelligences_artificiellles)
+            max_i = len(game.intelligences_artificiellles)
             while i < max_i and not trouve:
-                if found_game.intelligences_artificiellles == id_ia:
-                    found_game.sup_ia(id_ia)
+                if game.intelligences_artificiellles == id_ia:
+                    game.sup_ia(id_ia)
                     trouve = True
                 i += 1
 
             if trouve:
-                print(f"L'IA numéro {id_ia} du jeu {found_game.titre} a été supprimé.")
+                print(f"L'IA numéro {id_ia} du jeu {game.titre} a été supprimé.")
             else:
                 print("Aucune IA avec cet identifiant n'a été trouvée!")
         else:
@@ -171,33 +151,41 @@ class Performia:
         Fonction qui liste les IAs d'un jeu
         """
         self.list_game()
-
-        id_game = int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez consulter les IA: "))
-        found_game: Game
-
-        trouve = False
-        i = 0
-        max_i = len(self._games)
-        while i < max_i and not trouve:
-            if self._games[i].identifiant == id_game:
-                found_game = self._games[i]
-                trouve = True
-                found_game.list_ia()
-            i += 1
-
-        if not trouve:
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: ")))
+        if game:
+            game.list_ia()
+        else:
             print("Aucun jeu avec cet identifiant n'a été trouvé!")
 
     def get_data_games(self):
+        """
+        Renvoie les données à sauvegarder pour la liste de jeux
+        :return:
+        """
         # todo specify data method in _games
         return self._games
+
+    def get_game_by_id(self, id_game):
+        """
+        Renvoie un jeu de la liste
+        :param id_game: L'ID du jeu en question
+        :return: Retourne un jeu de la liste, ou None
+        """
+        i = 0
+        max_i = len(self._games)
+        while i < max_i:
+            if self._games[i].identifiant == id_game:
+                return self._games[i]
+            i += 1
+        return None
 
     @staticmethod
     def get_data_path():
         data_path = "."
 
         if platform.system().lower() == 'linux':
-            app_data_path = os.getenv("APPDATA")
+            app_data_path = os.path.expanduser("~")
             if not os.path.exists(f"{app_data_path}/.performia"):
                 os.mkdir(f"{app_data_path}/.performia")
             data_path = f"{app_data_path}/.performia"
@@ -269,6 +257,27 @@ class Performia:
         self.save_state()
         self.quitting = True
         print("Fin du programme")
+
+    # def launch_session(self):
+    #     ip, port = self._games[0].intelligences_artificiellles[0].ip, self._games[0].intelligences_artificiellles[
+    #         0].port
+    #     bytes_to_send = str.encode("Salut")
+    #     # Create a UDP socket at client side
+    #     sok = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    #     # Send to server using created UDP socket
+    #     sok.sendto(bytes_to_send, (ip, port))
+
+    def launch_session(self):
+        """
+        Kel : Launching the Performia session
+        Consists of loading a game and its IA
+
+        """
+        if self._games:
+            # Todo lance uniquement la première IA de la liste, à améliorer
+            thread = ServerThread(self._games[0].ip, self._games[0].port)
+            thread.start()
+        print("Session Launched ! ")
 
 
 if __name__ == '__main__':

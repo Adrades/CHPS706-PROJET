@@ -18,7 +18,7 @@ class Game:
         self.id_ia = 0
         self.backup_ia = []
 
-    def add_ia(self, titre="", chemin_executable=""):
+    def add_ia(self, titre="", chemin_executable="", ip="127.0.0.1",port=8080):
         """
         Méthode qui ajoute une IA à la liste de celles gérées par un certain jeu.
         :param titre: Le nom d'une IA
@@ -27,7 +27,7 @@ class Game:
         # todo ajouter la gestion des paramètres du lancement d'une IA, voir avec l'équipe jeux.
         # todo ajouter la vérification du chemin
 
-        self.intelligences_artificiellles.append(IA(self.id_ia, titre, chemin_executable))
+        self.intelligences_artificiellles.append(IA(self.id_ia, titre, chemin_executable, ip, port))
         self.id_ia += 1
 
     def sup_ia(self, identifiant):

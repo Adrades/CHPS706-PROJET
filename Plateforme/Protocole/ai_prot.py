@@ -9,6 +9,7 @@ bufferSize = 1024
 Connectmsg = "AI has connected to the game sucessfully"
 
 bytesToSend = str.encode(Connectmsg)
+# todo remove ? gameAddress = ("127.0.0.1", 8082)
 
 # Create a datagram socket
 
