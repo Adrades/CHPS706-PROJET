@@ -3,6 +3,7 @@ import platform
 import pickle
 from sys import stderr
 from Game import Game
+from ServerThread import ServerThread
 import socket
 
 
@@ -62,11 +63,16 @@ class Performia:
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
         chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
+        ip = self.safe_input("Saisissez une IP pour le serveur de jeu : ")
+        port = int(self.safe_input("Saisissez un port pour le jeu : ", int))
+
         self._games.append(
             Game(
                 self._game_id,
                 titre,
-                chemin
+                chemin,
+                ip,
+                port
             )
         )
         self._game_id += 1
@@ -77,17 +83,10 @@ class Performia:
         """
         self.list_game()
 
-        game = self.get_game_by_id(
-            int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : ")))
-        chemin = self.safe_input(f"Saisissez l'IP jeu : ")
-
-        if game:
-            titre = self.safe_input("Saisissez un titre pour l'ia : ")
-            ip = self.safe_input("Saisissez l'IP de l'IA : ")
-            port = int(self.safe_input("Saisissez le port : "))
-            game.add_ia(titre, chemin, ip, port)
-        else:
-            print("Aucun jeu avec cet identifiant n'a été trouvé!")
+        n_game = int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : "))
+        titre = self.safe_input("Saisissez un titre pour l'ia : ")
+        chemin = self.safe_input(f"Saisissez le chemin de l'executable de l'ia : ")
+        self._games[n_game].add_ia(titre, chemin)
 
     def sup_game(self):
         """
@@ -216,9 +215,10 @@ class Performia:
             self._game_id = data["_game_id"]
             self._games = data["_games"]
 
-    def safe_input(self, prompt=""):
+    def safe_input(self, prompt="", type_validation: type = str):
         """
         Fonction permettant de remplacer la fonction input, lorsque performia fonctionne en mode tty
+        :param type_validation: Une fonction qui vérifie l'entrée
         :param prompt: Le message de demande d'entrée clavier de l'utilisateur
         :return: L'entrée de l'utilisateur
         """
@@ -226,14 +226,15 @@ class Performia:
         i = ""
         while not input_valide:
             i = input(prompt)
-
-            # todo ajouter une vérification regex de l'input ?
-            if i.lower() in self._reserved_command.keys():
-                pass
-                # todo choix selon la commande réservée
-            else:
-                input_valide = True
-
+            try:
+                type_validation(i)
+                if i.lower() in self._reserved_command.keys():
+                    pass
+                    # todo choix selon la commande réservée
+                else:
+                    input_valide = True
+            except ValueError:
+                print(f"Mauvais type de données, essayer d'entrer un {type_validation.__doc__}")
         return i
 
     def help(self):
@@ -257,14 +258,26 @@ class Performia:
         self.quitting = True
         print("Fin du programme")
 
+    # def launch_session(self):
+    #     ip, port = self._games[0].intelligences_artificiellles[0].ip, self._games[0].intelligences_artificiellles[
+    #         0].port
+    #     bytes_to_send = str.encode("Salut")
+    #     # Create a UDP socket at client side
+    #     sok = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+    #     # Send to server using created UDP socket
+    #     sok.sendto(bytes_to_send, (ip, port))
+
     def launch_session(self):
-        ip, port = self._games[0].intelligences_artificiellles[0].ip, self._games[0].intelligences_artificiellles[
-            0].port
-        bytes_to_send = str.encode("Salut")
-        # Create a UDP socket at client side
-        sok = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-        # Send to server using created UDP socket
-        sok.sendto(bytes_to_send, (ip, port))
+        """
+        Kel : Launching the Performia session
+        Consists of loading a game and its IA
+
+        """
+        if self._games:
+            # Todo lance uniquement la première IA de la liste, à améliorer
+            thread = ServerThread(self._games[0].ip, self._games[0].port)
+            thread.start()
+        print("Session Launched ! ")
 
 
 if __name__ == '__main__':
