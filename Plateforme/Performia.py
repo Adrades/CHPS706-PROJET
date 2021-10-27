@@ -3,6 +3,7 @@ import platform
 import pickle
 from sys import stderr
 from Game import Game
+import socket
 
 
 class Performia:
@@ -78,7 +79,8 @@ class Performia:
 
         game = self.get_game_by_id(
             int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : ")))
-            chemin = self.safe_input(f"Saisissez l'IP jeu : ")
+        chemin = self.safe_input(f"Saisissez l'IP jeu : ")
+
         if game:
             titre = self.safe_input("Saisissez un titre pour l'ia : ")
             ip = self.safe_input("Saisissez l'IP de l'IA : ")
@@ -255,13 +257,15 @@ class Performia:
         self.quitting = True
         print("Fin du programme")
 
-    def launch_session():
-    	ip, port = games[0].intelligences_artificiellles[0].ip, games[0].intelligences_artificiellles[0].port
-    	bytesToSend = str.encode("Salut")
-	# Create a UDP socket at client side
-	sok = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-	# Send to server using created UDP socket
-	sok.sendto(bytesToSend, (ip, port))
+    def launch_session(self):
+        ip, port = self._games[0].intelligences_artificiellles[0].ip, self._games[0].intelligences_artificiellles[
+            0].port
+        bytes_to_send = str.encode("Salut")
+        # Create a UDP socket at client side
+        sok = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        # Send to server using created UDP socket
+        sok.sendto(bytes_to_send, (ip, port))
+
 
 if __name__ == '__main__':
     performia = Performia()
