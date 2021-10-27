@@ -181,7 +181,7 @@ class Performia:
         data_path = "."
 
         if platform.system().lower() == 'linux':
-            app_data_path = os.getenv("APPDATA")
+            app_data_path = os.path.expanduser("~")
             if not os.path.exists(f"{app_data_path}/.performia"):
                 os.mkdir(f"{app_data_path}/.performia")
             data_path = f"{app_data_path}/.performia"
