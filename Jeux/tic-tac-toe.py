@@ -1,111 +1,116 @@
+import os
 from tkinter import *
 from tkinter import messagebox
 
-root = Tk()
-root.title('Tic-Tac-Toe')
-# root.iconbitmap("c:/Users/lougo/Desktop/cours/master 1/CHPS706-PROJET/Jeux/icon/tictac2.ico")
-# root.iconbitmap('./icon/tictac2.ico')
-root.iconphoto(False, PhotoImage(file='./icon/tictac.png'))
+from functools import partial
 
-# X = True  O = false
-clicked = True
-count = 0
+BOARD_SIZE_ROW = 3
+BOARD_SIZE_GLOBAL = BOARD_SIZE_ROW * BOARD_SIZE_ROW
+ICON_PATH = './icon/tictac.png'
 global gagnant
 
+class game():
 
-def checkifwin(joueur):  # joueur est soit "X" soit "O" rien d'autre
-    global gagnant
-    retry = False
-    gagnant = False
+    window = None
+    playerTurn = True # X = True  O = false
+    count = 0
+    board = []
 
-    if b1["text"] == joueur and b2["text"] == joueur and b3["text"] == joueur:  # que des X sur la premiere ligne
-        gagnant = True
-    if b1["text"] == joueur and b4["text"] == joueur and b7["text"] == joueur:  # que des X sur la premiere colonne
-        gagnant = True
-    if b1["text"] == joueur and b5["text"] == joueur and b9["text"] == joueur:
-        # que des X sur la diagonale hautgauche/basdroit
-        gagnant = True
-    if b2["text"] == joueur and b6["text"] == joueur and b8["text"] == joueur:  # que des X sur la deuxième colonne
-        gagnant = True
-    if b4["text"] == joueur and b5["text"] == joueur and b6["text"] == joueur:  # que des X sur la deuxième ligne
-        gagnant = True
-    if b3["text"] == joueur and b5["text"] == joueur and b7["text"] == joueur:
-        # que des X sur la diagonale hautdroite/basgauche
-        gagnant = True
-    if b7["text"] == joueur and b8["text"] == joueur and b9["text"] == joueur:  # que des X sur la troisième ligne
-        gagnant = True
-    if b3["text"] == joueur and b6["text"] == joueur and b9["text"] == joueur:  # que des X sur la troisième colonne
-        gagnant = True
-    if gagnant is True:
-        retry = messagebox.askyesno("Victoire", joueur + " a gagné\n\nvoulez-vous recommencer ?")
-    if retry is True:
-        b1["text"] = ""  # recommencer la partie tout mettre a ""
-        b2["text"] = ""
-        b3["text"] = ""
-        b4["text"] = ""
-        b5["text"] = ""
-        b6["text"] = ""
-        b7["text"] = ""
-        b8["text"] = ""
-        b9["text"] = ""
-    elif gagnant is True:
-        root.destroy()  # fermer le jeu
+    def __init__(self):
+        self.loadWindow()
+        self.loadBoard()
 
+    def loadBoard(self):
+        # faire des boutons cliquables
+        for i in range(BOARD_SIZE_GLOBAL):
+            self.board.append(
+                Button(self.window,
+                    text="",
+                    font=("Helvetica", 20),
+                    height=3,
+                    width=6,
+                    bg="SystemButtonFace",
+                    command=partial(self.b_click, i)
+                )
+            )
 
-# actions de boutons
-def b_click(b):
-    global clicked, count
-    joueur = "X"
-    if b["text"] == "" and clicked is True:
-        b["text"] = "X"
-        clicked = False
-        joueur = "X"
-        count += 1
-    elif b["text"] == "" and clicked is False:
-        b["text"] = "O"
-        clicked = True
-        count += 1
-        joueur = "O"
-    else:
-        messagebox.showerror("TicTac", "Cette case a déjà été sélectionnée")
-    checkifwin(joueur)
+        for i in range(BOARD_SIZE_GLOBAL):
+            self.board[i].grid(row=i%BOARD_SIZE_ROW, column=int(i/BOARD_SIZE_ROW))
 
+    def loadWindow(self):
+        self.window = Tk()
+        self.window.title('Tic-Tac-Toe')
+        # root.iconbitmap("c:/Users/lougo/Desktop/cours/master 1/CHPS706-PROJET/Jeux/icon/tictac2.ico")
+        # root.iconbitmap('./icon/tictac2.ico')
+        if os.path.isfile(ICON_PATH):
+            self.window.iconphoto(False, PhotoImage(file=ICON_PATH))
 
-# faire des boutons cliquables
-b1 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b1))
-b2 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b2))
-b3 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b3))
+    def checkifwin(self, joueur):  # joueur est soit "X" soit "O" rien d'autre
+        global gagnant
+        retry = False
+        gagnant = False
 
-b4 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b4))
-b5 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b5))
-b6 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b6))
+        # horizontal
+        for i in range(BOARD_SIZE_ROW):
+            for j in range(BOARD_SIZE_ROW):
+                if (self.board[i+j*BOARD_SIZE_ROW]["text"] != joueur):
+                    break
+                if j == BOARD_SIZE_ROW - 1:
+                    gagnant = True
+                    break
+            if gagnant:
+                break
 
-b7 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b7))
-b8 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b8))
-b9 = Button(root, text="", font=("Helvetica", 20), height=3, width=6, bg="SystemButtonFace",
-            command=lambda: b_click(b9))
+        # Vertical
+        for i in range(BOARD_SIZE_ROW):
+            for j in range(BOARD_SIZE_ROW):
+                if (self.board[i*BOARD_SIZE_ROW+j]["text"] != joueur):
+                    break
+                if j == BOARD_SIZE_ROW - 1:
+                    gagnant = True
+                    break
+            if gagnant:
+                break
 
-b1.grid(row=0, column=0)
-b2.grid(row=0, column=1)
-b3.grid(row=0, column=2)
+        # Diag 1
+        for i in range(BOARD_SIZE_ROW):
+            if (self.board[i*BOARD_SIZE_ROW+i]["text"] != joueur):
+                break
+            if i == BOARD_SIZE_ROW - 1:
+                gagnant = True
+                break
 
-b4.grid(row=1, column=0)
-b5.grid(row=1, column=1)
-b6.grid(row=1, column=2)
+        # Diag 2
+        for i in range(BOARD_SIZE_ROW):
+            if (self.board[BOARD_SIZE_ROW - 1 + i * (BOARD_SIZE_ROW -1)]["text"] != joueur):
+                break
+            if i == BOARD_SIZE_ROW - 1:
+                gagnant = True
+                break
 
-b7.grid(row=2, column=0)
-b8.grid(row=2, column=1)
-b9.grid(row=2, column=2)
-value = 0
-value += 1
-# messagebox.askokcancel("debut", "test " + value.__str__())
-value += 1
-root.mainloop()
+        if gagnant is True:
+            retry = messagebox.askyesno("Victoire", joueur + " a gagné\n\nvoulez-vous recommencer ?")
+        if retry is True:
+            for i in range(BOARD_SIZE_GLOBAL):
+                self.board[i]["text"] = ""
+        elif gagnant is True:
+            self.window.destroy()  # fermer le jeu
+
+    # actions de boutons
+    def b_click(self, id):
+
+        joueur = "X" if self.playerTurn else "O"
+        if self.board[id]["text"] == "":
+            self.board[id]["text"] = joueur
+            self.playerTurn = not self.playerTurn
+            self.count += 1
+            self.checkifwin(joueur)
+        else:
+            messagebox.showerror("TicTac", "Cette case a déjà été sélectionnée")
+
+    def launch(self):
+        self.window.mainloop()
+
+if __name__ == "__main__":
+    currentGame = game()
+    currentGame.launch()
