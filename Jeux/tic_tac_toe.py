@@ -1,4 +1,5 @@
 import os
+import socket
 from tkinter import *
 from tkinter import messagebox
 
@@ -9,16 +10,18 @@ BOARD_SIZE_GLOBAL = BOARD_SIZE_ROW * BOARD_SIZE_ROW
 ICON_PATH = './icon/tictac.png'
 global gagnant
 
-class game():
+
+class tictactoe():
 
     window = None
-    playerTurn = True # X = True  O = false
+    playerTurn = True  # X = True  O = false
     count = 0
     board = []
 
     def __init__(self):
         self.loadWindow()
         self.loadBoard()
+        self.start_AI_comm()
 
     def loadBoard(self):
         # faire des boutons cliquables
@@ -106,11 +109,37 @@ class game():
             self.count += 1
             self.checkifwin(joueur)
         else:
-            messagebox.showerror("TicTac", "Cette case a déjà été sélectionnée")
+            self.send_error()
 
     def launch(self):
         self.window.mainloop()
+        
+    def send_error(self):
+        # envoyer une erreur a l'ia
+        messagebox.showerror("TicTacToe", "Cette case a déjà été sélectionnée")
+        
+    def start_AI_comm(self):
+        self.GameSocketInit = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        # il faut vérifier qu'il n'y a pas d'erreur ??
+
+    def end_AI_comm(self):
+        self.GameSocketInit.close()
+        # il n'y a pas autre chsoe a faire ??
+        #envoyer a l'ia que la communication est terminée
+        
+    def IA_error(self):
+        pass
+    
+    def send_IA(self):
+        Input_msg = "Game input"
+
+        bytesToSend = str.encode(Input_msg)
+
+        serverAddressPort = ("127.0.0.1", 8081)
+        #send Ia mais enfait on envoie au serveur pour q'uil envoie a l'ia connectée
+        self.GameSocketInit.sendto(bytesToSend, serverAddressPort)
+        
 
 if __name__ == "__main__":
-    currentGame = game()
+    currentGame = tictactoe()
     currentGame.launch()
