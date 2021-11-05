@@ -21,7 +21,8 @@ class tictactoe():
     def __init__(self):
         self.loadWindow()
         self.loadBoard()
-        self.start_AI_comm()
+        self.bufferSize = 2048
+        self.start_IA_comm()
 
     def loadBoard(self):
         # faire des boutons cliquables
@@ -101,15 +102,28 @@ class tictactoe():
 
     # actions de boutons
     def b_click(self, id):
-
-        joueur = "X" if self.playerTurn else "O"
+        
+        
+        joueur = "X"
         if self.board[id]["text"] == "":
             self.board[id]["text"] = joueur
-            self.playerTurn = not self.playerTurn
-            self.count += 1
             self.checkifwin(joueur)
+            self.count += 1
+            self.playerTurn = not self.playerTurn
+            
+            #on passe au tour de l'ia
+            self.send_IA()
+            
+            indice_joueia = self.recieve_IA()
+            self.board[indice_joueia]["text"] = "O"
+             
+            self.checkifwin("O")
+            self.count += 1
+            self.playerTurn = not self.playerTurn
+           
         else:
             self.send_error()
+         
 
     def launch(self):
         self.window.mainloop()
@@ -118,11 +132,11 @@ class tictactoe():
         # envoyer une erreur a l'ia
         messagebox.showerror("TicTacToe", "Cette case a déjà été sélectionnée")
         
-    def start_AI_comm(self):
+    def start_IA_comm(self):
         self.GameSocketInit = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         # il faut vérifier qu'il n'y a pas d'erreur ??
 
-    def end_AI_comm(self):
+    def end_IA_comm(self):
         self.GameSocketInit.close()
         # il n'y a pas autre chsoe a faire ??
         #envoyer a l'ia que la communication est terminée
@@ -131,13 +145,22 @@ class tictactoe():
         pass
     
     def send_IA(self):
-        Input_msg = "Game input"
-
+        Input_msg = ""
+        
+        for i in range(BOARD_SIZE_GLOBAL):
+            if self.board[i]["text"] == "":
+                Input_msg += (str(i) + "_") 
         bytesToSend = str.encode(Input_msg)
 
         serverAddressPort = ("127.0.0.1", 8081)
         #send Ia mais enfait on envoie au serveur pour q'uil envoie a l'ia connectée
         self.GameSocketInit.sendto(bytesToSend, serverAddressPort)
+        
+    def recieve_IA(self):
+        IA_recived_move = self.GameSocketInit.recvfrom(self.bufferSize)
+        indice_move = 
+        #return un indice du coup joué par l'ia
+        pass
         
 
 if __name__ == "__main__":
