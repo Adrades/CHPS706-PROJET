@@ -114,6 +114,7 @@ class tictactoe():
             #on passe au tour de l'ia
             self.send_IA()
             
+            
             indice_joueia = self.recieve_IA()
             self.board[indice_joueia]["text"] = "O"
              
@@ -157,10 +158,11 @@ class tictactoe():
         self.GameSocketInit.sendto(bytesToSend, serverAddressPort)
         
     def recieve_IA(self):
-        IA_recived_move = self.GameSocketInit.recvfrom(self.bufferSize)
-        indice_move = 
+        IA_recived_move = self.GameSocketInit.recv(2048)
+        
+        indice_move = int(IA_recived_move[0].decode('utf-8'))
         #return un indice du coup joué par l'ia
-        pass
+        return indice_move
         
 
 if __name__ == "__main__":
