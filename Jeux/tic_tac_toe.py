@@ -21,7 +21,9 @@ class tictactoe():
     def __init__(self):
         self.loadWindow()
         self.loadBoard()
-        self.bufferSize = 2048
+        self.bufferSize = 1024
+        self.localIP = "127.0.0.50"
+        self.localPort = 8081
         self.start_IA_comm()
 
     def loadBoard(self):
@@ -135,6 +137,7 @@ class tictactoe():
         
     def start_IA_comm(self):
         self.GameSocketInit = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        self.GameSocketInit.bind((self.localIP, self.localPort))
         # il faut vérifier qu'il n'y a pas d'erreur ??
 
     def end_IA_comm(self):
@@ -158,9 +161,13 @@ class tictactoe():
         self.GameSocketInit.sendto(bytesToSend, serverAddressPort)
         
     def recieve_IA(self):
-        IA_recived_move = self.GameSocketInit.recv(2048)
+    
         
-        indice_move = int(IA_recived_move[0].decode('utf-8'))
+        
+        IA_recived_move = self.GameSocketInit.recv(self.bufferSize)
+        
+        indice_move = int(IA_recived_move[0])
+        
         #return un indice du coup joué par l'ia
         return indice_move
         
