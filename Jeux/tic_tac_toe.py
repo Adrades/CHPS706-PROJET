@@ -103,16 +103,16 @@ class tictactoe():
             self.window.destroy()  # fermer le jeu
 
     # actions de boutons
-    def b_click(self, id):
+    def b_click(self, id_b):
 
         joueur = "X"
-        if self.board[id]["text"] == "":
-            self.board[id]["text"] = joueur
+        if self.board[id_b]["text"] == "":
+            self.board[id_b]["text"] = joueur
             self.checkifwin(joueur)
             self.count += 1
             self.playerTurn = not self.playerTurn
 
-            indice_joueia = id
+            indice_joueia = id_b
 
             while self.board[int(indice_joueia)]["text"] != "":
                 self.send_ia()
@@ -155,7 +155,7 @@ class tictactoe():
                 input_msg += (str(i) + "_")
         bytes_to_send = str.encode(input_msg)
 
-        server_address_port = ("127.0.0.1", 8081)
+        server_address_port = ("127.0.0.1", 8082)
         # send Ia mais enfait on envoie au serveur pour q'uil envoie a l'ia connectée
         self.GameSocketInit.sendto(bytes_to_send, server_address_port)
 
