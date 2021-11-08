@@ -2,12 +2,11 @@
 
 # faire une Ia qui joue au tictactoe
 
-import pyautogui
-import sys, socket
+import socket
 import random
 
 
-class IA_tictactoe():
+class IaTictactoe():
 
     def __init__(self):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -18,8 +17,8 @@ class IA_tictactoe():
 
             socket_jeu = self.__socket.recvfrom(2048)
             
-            bytesToSend = self.random_behavior()
-            self.__socket.sendto(str.encode(bytesToSend), socket_jeu[1])
+            bytes_to_send = self.random_behavior()
+            self.__socket.sendto(str.encode(bytes_to_send), socket_jeu[1])
 
     def random_behavior(self):
         return str(random.randint(0, 8))
@@ -29,5 +28,5 @@ class IA_tictactoe():
 
 
 if __name__ == "__main__":
-    current_IA = IA_tictactoe()
+    current_IA = IaTictactoe()
     current_IA.launch()
