@@ -1,4 +1,7 @@
-from IA import IA
+try :
+    from IA import IA
+except : 
+    from Plateforme.IA import IA
 
 
 class Game:

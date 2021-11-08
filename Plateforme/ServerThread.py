@@ -1,8 +1,13 @@
 import threading
 import time
-from Plateforme.Protocole.UDPServer import UDPServer
-from Plateforme.Protocole.UDPSocket import UDPSocket
-
+try : 
+    from Protocole.UDPServer import UDPServer
+except : 
+    from Plateforme.Protocole.UDPServer import UDPServer
+try : 
+    from Protocole.UDPSocket import UDPSocket
+except : 
+    from Plateforme.Protocole.UDPSocket import UDPSocket
 
 def action():
     print("Received")

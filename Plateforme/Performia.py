@@ -2,9 +2,15 @@ import os
 import platform
 import pickle
 from sys import stderr
-from Game import Game
-from ServerThread import ServerThread
+try:
+    from Game import Game
+except : 
+    from Plateforme.Game import Game
 
+try :
+    from ServerThread import ServerThread
+except :
+    from Plateforme.ServerThread import ServerThread
 
 class Performia:
     def __init__(self):
