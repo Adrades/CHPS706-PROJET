@@ -1,36 +1,31 @@
+#!/usr/bin/env python3
+
 # faire une Ia qui joue au tictactoe
 
 import pyautogui
-import sys
+import sys, socket
 import random
 
 
 class IA_tictactoe():
 
     def __init__(self):
-        pass
+        self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.__socket.bind(("127.0.0.1", 8081))
 
     def launch(self):
-        pass
+        while True:
 
-    def receive_msg(self):
-        pass
+            socket_jeu = self.__socket.recvfrom(2048)
+            
+            bytesToSend = self.random_behavior()
+            self.__socket.sendto(str.encode(bytesToSend), socket_jeu[1])
 
     def random_behavior(self):
-        # tableau des possiblité de click qui enleve les possibilité deja testées
-        possibilities = {0, 8}
-        # prendre une possibilité au hasard
-        selecteur = random.randint(0, 8)
-        # on recupere la ou il faut cliquer
-        while possibilities[selecteur] > 0 and selected == 0:
-            button_to_click = possibilities[selecteur]
-            selected = 1
-        pyautogui.click(x=100 * button_to_click, y=100 * button_to_click)
+        return str(random.randint(0, 8))
 
-        # c'est quoi un test unitaire ??
-
-    def make_move(self):
-        pass
+    def end_IA_comm(self):
+        self.__socket.close()
 
 
 if __name__ == "__main__":

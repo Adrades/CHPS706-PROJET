@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os
 import socket
 from tkinter import *
@@ -8,6 +10,7 @@ from functools import partial
 BOARD_SIZE_ROW = 3
 BOARD_SIZE_GLOBAL = BOARD_SIZE_ROW * BOARD_SIZE_ROW
 ICON_PATH = './icon/tictac.png'
+global tableau
 global gagnant
 
 
@@ -21,9 +24,7 @@ class tictactoe():
     def __init__(self):
         self.loadWindow()
         self.loadBoard()
-        self.bufferSize = 1024
-        self.localIP = "127.0.0.50"
-        self.localPort = 8081
+        self.bufferSize = 2048
         self.start_IA_comm()
 
     def loadBoard(self):
@@ -35,7 +36,7 @@ class tictactoe():
                     font=("Helvetica", 20),
                     height=3,
                     width=6,
-                    bg="SystemButtonFace",
+                    bg="White",
                     command=partial(self.b_click, i)
                 )
             )
@@ -112,14 +113,16 @@ class tictactoe():
             self.checkifwin(joueur)
             self.count += 1
             self.playerTurn = not self.playerTurn
-            
-            #on passe au tour de l'ia
-            self.send_IA()
-            
-            
-            indice_joueia = self.recieve_IA()
-            self.board[indice_joueia]["text"] = "O"
-             
+
+            indice_joueia = id
+
+            while self.board[int(indice_joueia)]["text"] != "":
+                self.send_IA()
+                
+                indice_joueia = self.GameSocketInit.recv(2048)
+                
+            self.board[int(indice_joueia)]["text"] = "O"
+
             self.checkifwin("O")
             self.count += 1
             self.playerTurn = not self.playerTurn
@@ -137,7 +140,6 @@ class tictactoe():
         
     def start_IA_comm(self):
         self.GameSocketInit = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-        self.GameSocketInit.bind((self.localIP, self.localPort))
         # il faut vérifier qu'il n'y a pas d'erreur ??
 
     def end_IA_comm(self):
@@ -153,24 +155,12 @@ class tictactoe():
         
         for i in range(BOARD_SIZE_GLOBAL):
             if self.board[i]["text"] == "":
-                Input_msg += (str(i) + "_") 
+                Input_msg += (str(i) + "_")
         bytesToSend = str.encode(Input_msg)
 
         serverAddressPort = ("127.0.0.1", 8081)
         #send Ia mais enfait on envoie au serveur pour q'uil envoie a l'ia connectée
         self.GameSocketInit.sendto(bytesToSend, serverAddressPort)
-        
-    def recieve_IA(self):
-    
-        
-        
-        IA_recived_move = self.GameSocketInit.recv(self.bufferSize)
-        
-        indice_move = int(IA_recived_move[0])
-        
-        #return un indice du coup joué par l'ia
-        return indice_move
-        
 
 if __name__ == "__main__":
     currentGame = tictactoe()
