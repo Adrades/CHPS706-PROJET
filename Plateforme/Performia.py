@@ -4,13 +4,14 @@ import pickle
 from sys import stderr
 try:
     from Game import Game
-except : 
+except :
     from Plateforme.Game import Game
 
 try :
     from ServerThread import ServerThread
 except :
     from Plateforme.ServerThread import ServerThread
+
 
 class Performia:
     def __init__(self):
@@ -276,13 +277,17 @@ class Performia:
         """
         Kel : Launching the Performia session
         Consists of loading a game and its IA
-
         """
-        if self._games:
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu que vous voulez lancer: ")))
+
+        if game:
             # Todo lance uniquement la première IA de la liste, à améliorer
-            thread = ServerThread(self._games[0].ip, self._games[0].port)
-            thread.start()
-        print("Session Launched ! ")
+            thread_game = ServerThread(game.ip, self._games[0].port)
+            thread_ia = ServerThread(game.intelligences_artificiellles[0].ip, game.intelligences_artificiellles[0].port)
+            thread_game.start()
+            thread_ia.start()
+            print("Session Launched !")
 
 
 if __name__ == '__main__':

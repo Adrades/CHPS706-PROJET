@@ -1,13 +1,12 @@
 try :
     from IA import IA
-except : 
+except :
     from Plateforme.IA import IA
 
 
 class Game:
     """
     Classe permettant la gestion des jeux stockés par performia
-
     """
 
     def __init__(self, identifiant=0, titre="", ip="127.0.0.1", port=25565):
