@@ -10,7 +10,11 @@ class IaTictactoe():
 
     def __init__(self):
         self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.__socket.bind(("127.0.0.1", 8082))
+
+        self.socket_gestionnaire = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.__socket.bind(("127.0.0.1", 8081))
+
 
     def launch(self):
         while True:

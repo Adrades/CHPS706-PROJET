@@ -155,7 +155,7 @@ class tictactoe():
                 input_msg += (str(i) + "_")
         bytes_to_send = str.encode(input_msg)
 
-        server_address_port = ("127.0.0.1", 8081)
+        server_address_port = ("127.0.0.1", 8082)
         # send Ia mais enfait on envoie au serveur pour q'uil envoie a l'ia connectée
         self.GameSocketInit.sendto(bytes_to_send, server_address_port)
 
