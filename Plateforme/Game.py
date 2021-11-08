@@ -21,7 +21,8 @@ class Game:
         """
         Méthode qui ajoute une IA à la liste de celles gérées par un certain jeu.
         :param titre: Le nom d'une IA
-        :param chemin_executable: Le chemin de l'éxecutable d'une IA
+        :param ip: Ip du serveur l'IA
+        :param port: port où tourne l'AI
         """
         # todo ajouter la gestion des paramètres du lancement d'une IA, voir avec l'équipe jeux.
         # todo ajouter la vérification du chemin
@@ -53,8 +54,9 @@ class Game:
 
 if __name__ == '__main__':
     game_test = Game()
-    game_test.add_ia("msldkmlqs", "179.0.0.1")
-    game_test.add_ia("msldkmlqs")
-    game_test.add_ia("msldkmlqs", "179.0.0.1", 1545)
+    game_test.add_ia("IA_zero", "179.0.0.4")
+    game_test.add_ia("IA_un", "179.0.0.8")
+    game_test.add_ia("IA_deux")
+    game_test.add_ia("IA_trois", "179.0.0.1", 1545)
     game_test.sup_ia(0)
-    print(game_test.intelligences_artificiellles)
+    print(*[str(ia) for ia in game_test.intelligences_artificiellles])

@@ -80,10 +80,12 @@ class Performia:
         """
         self.list_game()
 
-        n_game = int(self.safe_input("Saisissez l'identifiant du jeu auquel vous voulez ajouter une IA : "))
+        game = self.get_game_by_id(
+            int(self.safe_input("Saisissez l'identifiant du jeu où vous voulez ajouter une IA: ")))
         titre = self.safe_input("Saisissez un titre pour l'ia : ")
-        chemin = self.safe_input(f"Saisissez le chemin de l'executable de l'ia : ")
-        self._games[n_game].add_ia(titre, chemin)
+        ip = self.safe_input("Saisissez une IP pour le serveur de jeu : ")
+        port = int(self.safe_input("Saisissez un port pour le jeu : ", int))
+        game.add_ia(titre, ip, port)
 
     def sup_game(self):
         """
@@ -149,7 +151,7 @@ class Performia:
         """
         self.list_game()
         game = self.get_game_by_id(
-            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez supprimer une IA: ")))
+            int(self.safe_input("Saisissez l'identifiant du jeu dont vous voulez lister une IA: ")))
         if game:
             game.list_ia()
         else:
