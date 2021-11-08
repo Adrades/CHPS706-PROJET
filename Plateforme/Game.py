@@ -7,12 +7,12 @@ class Game:
 
     """
 
-    def __init__(self, identifiant=0, titre="", chemin_executable="", ip="127.0.0.1", port=25565):
+    def __init__(self, identifiant=0, titre="", ip="127.0.0.1", port=25565):
         self.identifiant = identifiant
         self.titre = titre
-        self.chemin_executable = chemin_executable
+        # self.chemin_executable = chemin_executable
         self.ip = ip
-        self.port = 25565
+        self.port = port
 
         self.intelligences_artificiellles = []
         self.id_ia = 0
@@ -49,12 +49,12 @@ class Game:
             print(ia)
 
     def __str__(self):
-        return f"Identifiant\t:\t{self.identifiant}\nTitre\t:\t{self.titre}\nExecutable\t:\t{self.chemin_executable}\n"
+        return f"Identifiant\t:\t{self.identifiant}\nTitre\t:\t{self.titre}\nExecutable\t:\t{self.ip}:{self.port}\n"
 
 
 if __name__ == '__main__':
     game_test = Game()
-    game_test.add_ia("msldkmlqs", "sqdqsd")
+    game_test.add_ia("msldkmlqs", "127.0.0.1")
     game_test.add_ia("msldkmlqs", "sqdqsd")
     game_test.add_ia("msldkmlqs", "sqdqsd")
     game_test.sup_ia(0)

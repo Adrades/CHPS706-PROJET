@@ -4,7 +4,6 @@ import pickle
 from sys import stderr
 from Game import Game
 from ServerThread import ServerThread
-import socket
 
 
 class Performia:
@@ -62,7 +61,7 @@ class Performia:
         Fonction qui ajoute un programme à la liste des jeux
         """
         titre = self.safe_input("Saisissez un titre pour le jeu : ")
-        chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
+        # chemin = self.safe_input(f"Saisissez le chemin de l'executable du jeu : ")
         ip = self.safe_input("Saisissez une IP pour le serveur de jeu : ")
         port = int(self.safe_input("Saisissez un port pour le jeu : ", int))
 
@@ -70,7 +69,7 @@ class Performia:
             Game(
                 self._game_id,
                 titre,
-                chemin,
+                # chemin,
                 ip,
                 port
             )
