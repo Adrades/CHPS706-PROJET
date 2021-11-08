@@ -103,16 +103,16 @@ class tictactoe():
             self.window.destroy()  # fermer le jeu
 
     # actions de boutons
-    def b_click(self, id):
+    def b_click(self, id_b):
 
         joueur = "X"
-        if self.board[id]["text"] == "":
-            self.board[id]["text"] = joueur
+        if self.board[id_b]["text"] == "":
+            self.board[id_b]["text"] = joueur
             self.checkifwin(joueur)
             self.count += 1
             self.playerTurn = not self.playerTurn
 
-            indice_joueia = id
+            indice_joueia = id_b
 
             while self.board[int(indice_joueia)]["text"] != "":
                 self.send_ia()

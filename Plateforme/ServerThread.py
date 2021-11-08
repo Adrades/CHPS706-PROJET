@@ -1,5 +1,4 @@
 import threading
-import time
 from Plateforme.Protocole.UDPServer import UDPServer
 from Plateforme.Protocole.UDPSocket import UDPSocket
 
